@@ -8,6 +8,7 @@ export default function WATSimulator() {
   const [timeLeft, setTimeLeft] = useState(15)
   const [countdownValue, setCountdownValue] = useState(3)
   const audioContextRef = useRef(null)
+  const [showAbout, setShowAbout] = useState(false)
 
   // Parse input text into words
   const parseInput = (text) => {
@@ -156,6 +157,16 @@ export default function WATSimulator() {
     return () => window.removeEventListener('keydown', handleEscape)
   }, [screen])
 
+  // Handle Escape key to close About modal on input screen
+  useEffect(() => {
+    if (!showAbout) return
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') setShowAbout(false)
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [showAbout])
+
   const reset = () => {
     setScreen('input')
     setInputText('')
@@ -169,7 +180,7 @@ export default function WATSimulator() {
   if (screen === 'input') {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center p-4">
-        <div className="max-w-2xl w-full bg-white/5 border-2 border-white/20 rounded-lg p-6 md:p-8">
+        <div className="max-w-2xl w-full bg-white/5 border-2 border-white/20 rounded-lg p-6 md:p-8 relative">
           {/* Header */}
           <div className="text-center mb-6 md:mb-8">
             <h1 className="text-3xl md:text-5xl font-bold text-white mb-2 md:mb-3 tracking-wider">
@@ -179,6 +190,15 @@ export default function WATSimulator() {
               Word Association Test Practice
             </p>
           </div>
+
+          {/* About button (top-right) */}
+          <button
+            onClick={() => setShowAbout(true)}
+            className="absolute top-4 right-4 text-white/60 hover:text-white text-sm"
+            aria-label="About this tool"
+          >
+            ℹ️ About
+          </button>
 
           {/* Input Section */}
           <div className="mb-6">
@@ -218,6 +238,86 @@ export default function WATSimulator() {
             <p>⏳ Countdown: 3, 2, 1, START before test begins</p>
             <p>⌨️ Press ESC to exit anytime</p>
           </div>
+
+          {/* About Modal */}
+          {showAbout && (
+            <div
+              className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4 animate-fadeIn"
+              onClick={() => setShowAbout(false)}
+              role="dialog"
+              aria-modal="true"
+            >
+              <div
+                className="bg-white/5 border-2 border-white/20 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8 relative text-white"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Close button */}
+                <button
+                  onClick={() => setShowAbout(false)}
+                  className="absolute top-4 right-4 text-white/60 hover:text-white text-2xl"
+                  aria-label="Close about dialog"
+                >
+                  ×
+                </button>
+
+                {/* Content */}
+                <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">
+                  About This Tool
+                </h2>
+
+                <div className="space-y-6 text-white/80 text-sm md:text-base">
+                  <p>
+                    This WAT Simulator is a free educational tool created for defense aspirants preparing for SSB (Services Selection Board) interviews.
+                  </p>
+
+                  <div>
+                    <h3 className="font-semibold text-white mb-2">🎯 Purpose</h3>
+                    <p>
+                      This tool is my contribution to help aspiring officers practice Word Association Tests in a realistic environment. It is provided completely free of charge for educational purposes only.
+                    </p>
+                  </div>
+
+                  <div>
+                    <h3 className="font-semibold text-white mb-2">⚠️ Ethical Use</h3>
+                    <ul className="list-disc pl-5 space-y-1">
+                      <li>For personal practice and self-improvement only</li>
+                      <li>Not for commercial purposes or resale</li>
+                      <li>Not for cheating or malpractice during actual tests</li>
+                      <li>Respect the spirit of honest preparation</li>
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h3 className="font-semibold text-white mb-2">👨‍💻 Developer</h3>
+                    <p>
+                      Created by: <span className="text-white">Sumit Rai</span><br />
+                      Contact: <a href="mailto:raisumit585@gmail.com" className="underline text-white/80 hover:text-white">raisumit585@gmail.com</a>
+                    </p>
+                    <p className="mt-2">For feedback, suggestions, or reporting issues, feel free to reach out.</p>
+                  </div>
+
+                  <div>
+                    <h3 className="font-semibold text-white mb-2">📜 Copyright & Legal</h3>
+                    <p>© 2024 Sumit Rai. All rights reserved.</p>
+                    <p className="mt-2">
+                      This tool is provided "as-is" without any warranties. The developer is not responsible for how this tool is used. This is not an official SSB preparation tool and is not affiliated with any defense organization.
+                    </p>
+                    <p className="mt-2">Do not redistribute, modify, or use this tool for commercial purposes without explicit permission.</p>
+                  </div>
+
+                  <p className="text-white mt-2">🇮🇳 Jai Hind!</p>
+                </div>
+
+                {/* Close button at bottom */}
+                <button
+                  onClick={() => setShowAbout(false)}
+                  className="mt-8 w-full bg-white text-black py-3 px-6 rounded-lg font-bold uppercase tracking-widest hover:bg-white/90"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     )
